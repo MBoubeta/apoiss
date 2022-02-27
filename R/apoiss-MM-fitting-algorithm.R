@@ -43,10 +43,10 @@ f = function(theta, X, nu, y) {
 #' @return \partial f_k / \partial \beta_r.
 #' @export
 
-partial_fk_beta = function(X, nu, k, r, aux1) {
+partial_fk_br = function(X, nu, k, r, aux1) {
   
-  partial_fk_beta = sum(nu * aux1 * X[, r] * X[, k])
-  return(partial_fk_beta)
+  partial_fk_br = sum(nu * aux1 * X[, r] * X[, k])
+  return(partial_fk_br)
   
 }
 
@@ -177,7 +177,8 @@ varcov = function(X, theta, nu, maxiter, tol, B, ...) {
   # bootstrap resamples
   for (b in 1:B) {
     repeat {
-      yboot_res = y_gen(X, beta, phi, nu)
+      # TODO: review boot
+      yboot_res = yboot(X, beta, phi, nu)
       y_boot = yboot_res$y
       
       # fit the model log(p_{d}) = \bbeta \xx_{d} + \phi v_{d} (d = domain) by MM.
@@ -248,9 +249,7 @@ MM = function(y, X, beta0, phi0, nu, maxiter, tol, B, add_std_error=FALSE, ...) 
   theta0 = c(beta0, phi0)
   
   # MM fit
-  # TODO: modify to not specify the parameters of function nleqslv
-  modMM = nleqslv(x=theta0, f, jac=H, X, nu, y, method='Newton', global='dbldog', xscalm="auto",
-                  control=list(xtol=tol, ftol=tol, btol=1e-3, cndtol=1e-12, maxit=maxiter, delta=-1.0, stepmax=5))
+  modMM = nleqslv(x=theta0, f, jac=H, X, nu, y, ...)
   
   iter = modMM$iter
   beta = modMM$x[1:p]
@@ -293,7 +292,7 @@ MM = function(y, X, beta0, phi0, nu, maxiter, tol, B, add_std_error=FALSE, ...) 
     coeffsMM = append(coeffsMM, coeffsMM_std)
   }
   
-  return(MM_coeffs)  
+  return(coeffsMM)  
 }
 
 
