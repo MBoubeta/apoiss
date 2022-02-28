@@ -66,15 +66,21 @@ This package provides an implementation of the theoretical estimators obtained i
     │
     ├── R
     │   │
-    |   ├── apoiss-fitting-algorithms.R
+    |   ├── apoiss-MM-fitting-algorithm.R
     │   │
-    │   └── apoiss-predictors.R
+    |   ├── apoiss-PQL-fitting-algorithm.R
+    │   │
+    |   ├── apoiss-predictors.R
+    │   │
+    │   └── metrics.R
     |
     ├── simulations 
     │   │  
     │   └── apoiss
     │       |
-    │       └── sim1.R
+    │       ├── sim1.R
+    │       |
+    │       └── sim2.R
     │
     └── README.md
 
