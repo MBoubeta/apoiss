@@ -69,7 +69,7 @@ Hpql = function(xi, X, phi, nu, y) {
 }
 
 
-pql = function(xi0, X, phi0, nu, y, L, tol, maxIter, epsXiPhi, ...) {
+pql = function(xi0, X, phi0, nu, y, L, epsXiPhi, ...) {
   
   # parameters
   D = dim(X)[1]

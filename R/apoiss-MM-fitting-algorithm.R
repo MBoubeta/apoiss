@@ -146,9 +146,8 @@ mm_fit = function(theta0, X, nu, y, ...) {
   
   # MM fit
   mm_est = nleqslv(x=theta0, f, jac=H, X, nu, y, ...)
-  theta = mm_est$x
   
-  return(theta)
+  return(mm_est)
 }
   
   
@@ -198,7 +197,7 @@ varcov = function(X, theta, nu, B, ...) {
       phi0 = sqrt(sum((eta_tilde - eta_dir)^2) / D)
       theta0 = c(beta0, phi0)
       
-      mm_est = try(mm_fit(x=theta0, f, jac=H, X, nu, y_boot, ...), TRUE)
+      mm_est = try(mm_fit(theta0, X, nu, y_boot, ...), TRUE)
       
       if (class(mm_est) != 'try-error') {
         theta_boot[, b] = c(mm_est$x[1:p], mm_est$x[p + 1])
@@ -258,7 +257,7 @@ mm = function(y, X, beta0, phi0, nu, B, add_std_error=FALSE, ...) {
   theta0 = c(beta0, phi0)
   
   # MM fit
-  mm_est = mm_fit(x=theta0, f, jac=H, X, nu, y, ...)
+  mm_est = mm_fit(theta0, X, nu, y, ...)
   
   iter = mm_est$iter
   beta = mm_est$x[1:p]
