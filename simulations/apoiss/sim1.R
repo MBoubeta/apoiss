@@ -80,7 +80,7 @@ for (k in 1:K) {
   eta_dir = log((y + 1)/(nu + 1))
   phi0 = sqrt(sum((eta_tilde - eta_dir)^2)/D)
   
-  fit_mm = MM(y=y, X=X, beta0=beta0, phi0=phi0, nu=nu, maxiter=maxiter, tol=tol, B=B, add_std_error=FALSE,
+  fit_mm = mm(y=y, X=X, beta0=beta0, phi0=phi0, nu=nu, B=B, add_std_error=FALSE,
               method='Newton', global='dbldog', xscalm="auto", control=list(xtol=tol, ftol=tol, maxit=maxiter))
   
   beta_mm[k, ] = fit_mm$coefficients
@@ -89,7 +89,7 @@ for (k in 1:K) {
   # PQL
   v0 = rep(0, times=D)
   xi0 = c(beta0, v0)
-  fit_pql = PQL(xi0, X, phi0, nu, y, S, tol, maxiter, epsXiPhi=1e-2,
+  fit_pql = pql(xi0, X, phi0, nu, y, S, epsXiPhi=1e-2,
                 method='Newton', global='dbldog', xscalm="auto", control=list(xtol=tol, ftol=tol, maxit=maxiter))
   beta_pql[k, ] = fit_pql$xi[1:p]
   phi_pql[k] = fit_pql$phi

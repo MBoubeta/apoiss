@@ -69,7 +69,7 @@ Hpql = function(xi, X, phi, nu, y) {
 }
 
 
-PQL = function(xi0, X, phi0, nu, y, L, tol, maxIter, epsXiPhi, ...) {
+pql = function(xi0, X, phi0, nu, y, L, epsXiPhi, ...) {
   
   # parameters
   D = dim(X)[1]
@@ -99,7 +99,7 @@ PQL = function(xi0, X, phi0, nu, y, L, tol, maxIter, epsXiPhi, ...) {
   }
   
   # PQL results
-  PQLres = list('xi'=xiNew[ell, ], 'phi'=phiNew[ell], 'xiRes'=xiNew[1:ell, ], 'phiRes'=phiNew[1:ell],
-                'normXiPhi'=normXiPhi[1:ell], 'iter'=ell)
-  return(PQLres)
+  pql_est = list('xi'=xiNew[ell, ], 'phi'=phiNew[ell], 'xiRes'=xiNew[1:ell, ], 'phiRes'=phiNew[1:ell],
+                 'normXiPhi'=normXiPhi[1:ell], 'iter'=ell)
+  return(pql_est)
 }

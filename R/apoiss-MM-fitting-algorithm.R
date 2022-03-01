@@ -142,6 +142,15 @@ H = function(theta, X, nu, y) {
 }
 
 
+mm_fit = function(theta0, X, nu, y, ...) {
+  
+  # MM fit
+  mm_est = nleqslv(x=theta0, f, jac=H, X, nu, y, ...)
+  
+  return(mm_est)
+}
+  
+  
 #' Calculate the variance-covariance matrix of (\hat{\beta}_0, \hat{\beta}_1, \hat{\phi}) by bootstrap.
 #'
 #' @param X: Design matrix.
@@ -153,7 +162,7 @@ H = function(theta, X, nu, y) {
 #' @return Variance-covariance matrix.
 #' @export
 
-varcov = function(X, theta, nu, maxiter, tol, B, ...) {
+varcov = function(X, theta, nu, B, ...) {
   
   # set parameters  
   D = dim(X)[1]
@@ -188,11 +197,10 @@ varcov = function(X, theta, nu, maxiter, tol, B, ...) {
       phi0 = sqrt(sum((eta_tilde - eta_dir)^2) / D)
       theta0 = c(beta0, phi0)
       
-      MM = try(nleqslv(x=theta0, f, jac=H, X, nu, y_boot, method='Newton', global='dbldog', xscalm="auto",
-                       control=list(xtol=tol, ftol=tol, btol=1e-3, cndtol=1e-12, maxit=maxiter, delta=-1.0, stepmax=5)),TRUE)
+      mm_est = try(mm_fit(theta0, X, nu, y_boot, ...), TRUE)
       
-      if (class(MM) != 'try-error') {
-        theta_boot[, b] = c(MM$x[1:p], MM$x[p + 1])
+      if (class(mm_est) != 'try-error') {
+        theta_boot[, b] = c(mm_est$x[1:p], mm_est$x[p + 1])
         break
       }
     }
@@ -242,28 +250,28 @@ add_code = function(i, pvalue) {
 #' @return The estimations of model parameters using the MM fitting algorithm.
 #' @export
 
-MM = function(y, X, beta0, phi0, nu, maxiter, tol, B, add_std_error=FALSE, ...) {
+mm = function(y, X, beta0, phi0, nu, B, add_std_error=FALSE, ...) {
   
   # parameter definition
   p = length(beta0)
   theta0 = c(beta0, phi0)
   
   # MM fit
-  modMM = nleqslv(x=theta0, f, jac=H, X, nu, y, ...)
+  mm_est = mm_fit(theta0, X, nu, y, ...)
   
-  iter = modMM$iter
-  beta = modMM$x[1:p]
-  phi = modMM$x[p + 1]
+  iter = mm_est$iter
+  beta = mm_est$x[1:p]
+  phi = mm_est$x[p + 1]
   theta = c(beta, phi)
   
   # names of beta
   names(beta) = colnames(X)
   
-  coeffsMM = list('coefficients' = beta, 'random_effects' = phi)
+  mm_est = list('coefficients' = beta, 'random_effects' = phi)
   
   if (add_std_error == TRUE) {
     # variance-covariance matrix of (\hat{\beta}_0, \hat{\beta}_1, \hat{\phi})
-    var_cov = varcov(X, theta, nu, maxiter, tol, B)
+    var_cov = varcov(X, theta, nu, B, ...)
     std_err = sqrt(diag(var_cov))[1:p]
     
     # results
@@ -288,11 +296,11 @@ MM = function(y, X, beta0, phi0, nu, maxiter, tol, B, add_std_error=FALSE, ...) 
     names(fixed_effs) = c('Coefficients', 'Std. Error', 'z value', 'Pr(>|z|))', ' ')
     print(fixed_effs)
     
-    coeffsMM_std = list('std_error'=std_err, 'zvalue'=zvalue, 'pvalue'=pvalue, 'iter'=iter)
-    coeffsMM = append(coeffsMM, coeffsMM_std)
+    mm_est_std = list('std_error'=std_err, 'zvalue'=zvalue, 'pvalue'=pvalue, 'iter'=iter)
+    mm_est = append(mm_est, mm_est_std)
   }
   
-  return(coeffsMM)  
+  return(mm_est)  
 }
 
 
