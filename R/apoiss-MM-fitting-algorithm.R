@@ -250,7 +250,7 @@ add_code = function(i, pvalue) {
 #' @return The estimations of model parameters using the MM fitting algorithm.
 #' @export
 
-mm = function(y, X, beta0, phi0, nu, B, add_std_error=FALSE, ...) {
+mm = function(y, X, beta0, phi0, nu, add_std_error=FALSE, B=NULL, ...) {
   
   # parameter definition
   p = length(beta0)
