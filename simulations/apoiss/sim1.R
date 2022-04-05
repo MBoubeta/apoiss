@@ -80,7 +80,7 @@ for (k in 1:K) {
   eta_dir = log((y + 1)/(nu + 1))
   phi0 = sqrt(sum((eta_tilde - eta_dir)^2)/D)
   
-  fit_mm = mm(y=y, X=X, beta0=beta0, phi0=phi0, nu=nu, B=B, add_std_error=FALSE,
+  fit_mm = mm(y=y, X=X, beta0=beta0, phi0=phi0, nu=nu, add_std_error=FALSE,
               method='Newton', global='dbldog', xscalm="auto", control=list(xtol=tol, ftol=tol, maxit=maxiter))
   
   beta_mm[k, ] = fit_mm$coefficients
