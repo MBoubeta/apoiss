@@ -150,7 +150,21 @@ mm_fit = function(theta0, X, nu, y, ...) {
   return(mm_est)
 }
   
+
+yboot = function(X, beta, phi, nu) {
   
+  D = dim(X)[1]
+  v = rnorm(D, mean=0, sd=1)
+  
+  eta = X %*% beta + phi*v
+  pd = exp(eta)
+  
+  y = rpois(D, nu*pd)
+  res = list('y'=y, 'pd'=pd, 'v'=v)
+  return(res)
+}
+
+
 #' Calculate the variance-covariance matrix of (\hat{\beta}_0, \hat{\beta}_1, \hat{\phi}) by bootstrap.
 #'
 #' @param X: Design matrix.
@@ -235,6 +249,7 @@ add_code = function(i, pvalue) {
   if(0.1 <= pvalue[i]) {code = ' '}
   return(code)
 }
+
 
 #' Estimation of model parameters (\hat{\beta}_k, k=0, ..., p, \hat{\phi}) using the MM fitting algorithm.
 #'
